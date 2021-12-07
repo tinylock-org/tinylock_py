@@ -8,7 +8,7 @@ from ..contracts.algolocker_mainnet import approval_program, clear_state_program
 from ..contracts.algolocker_sig import approval_program as signature_program
 
 def getTinylockerContractTouple(client: AlgodClient) -> Tuple[bytes, bytes] :
-    return fullyCompileContract(client, approval_program()), fullyCompileContract(client, clear_state_program)
+    return fullyCompileContract(client, approval_program()), fullyCompileContract(client, clear_state_program())
 
 def getTinylockerSignature(
     client: AlgodClient, 
