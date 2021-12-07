@@ -3,7 +3,7 @@
 from algosdk.future.transaction import ApplicationNoOpTxn
 from algosdk.v2client.algod import AlgodClient
 from tinyman.utils import TransactionGroup
-from utils.account import Account
+from ..utils.account import Account
 
 
 def changeAlgolockerFee(

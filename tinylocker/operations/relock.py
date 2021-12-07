@@ -2,7 +2,7 @@ from algosdk.future.transaction import ApplicationNoOpTxn, AssetTransferTxn, Log
 from algosdk.logic import get_application_address
 from algosdk.v2client.algod import AlgodClient
 
-from utils.account import Account
+from ..utils.account import Account
 from tinyman.utils import TransactionGroup
 
 

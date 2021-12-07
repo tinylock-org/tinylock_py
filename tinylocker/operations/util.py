@@ -1,8 +1,8 @@
 from algosdk.future.transaction import AssetCreateTxn, AssetOptInTxn, AssetTransferTxn
 from algosdk.v2client.algod import AlgodClient
 
-from utils.account import Account
-from utils.transaction import waitForTransaction
+from ..utils.account import Account
+from ..utils.transaction import waitForTransaction
 
 def optinToken(
     client: AlgodClient,

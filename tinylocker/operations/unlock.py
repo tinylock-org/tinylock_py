@@ -1,7 +1,7 @@
 from algosdk.future.transaction import ApplicationNoOpTxn, AssetTransferTxn, LogicSig, PaymentTxn
 from algosdk.v2client.algod import AlgodClient
 
-from utils.account import Account
+from ..utils.account import Account
 from tinyman.utils import TransactionGroup
 
 def unlockToken(client: AlgodClient, signature: LogicSig, appID: int, sender: Account, amount: int, lock_token: int) : #-> None

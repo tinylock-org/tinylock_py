@@ -2,7 +2,7 @@
 from algosdk.v2client.algod import AlgodClient
 from algosdk.logic import get_application_address
 from algosdk.future.transaction import PaymentTxn, ApplicationNoOpTxn
-from utils.account import Account
+from ..utils.account import Account
 from tinyman.utils import TransactionGroup
 
 

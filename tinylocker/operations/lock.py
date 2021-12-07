@@ -3,7 +3,7 @@
 from algosdk.future.transaction import ApplicationOptInTxn, AssetOptInTxn, AssetTransferTxn, LogicSig, PaymentTxn
 from algosdk.v2client.algod import AlgodClient
 from algosdk.logic import get_application_address
-from utils.account import Account
+from ..utils.account import Account
 from tinyman.utils import TransactionGroup
 
 def lockToken(client: AlgodClient, signature: LogicSig, appID: int, sender: Account, amount: int, user_asa_id: int, tinylock_asa_id:int, time: int, fee: int) : #-> None

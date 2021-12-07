@@ -8,11 +8,11 @@ from tinyman.v1.client import TinymanClient
 from tinyman.v1.constants import MAINNET_VALIDATOR_APP_ID, TESTNET_VALIDATOR_APP_ID
 from constants import ALGOD_ADDRESS_MAINNET, ALGOD_ADDRESS_TESTNET, ALGOD_TOKEN, MAINNET, TESTNET, TINYLOCK_APP_MAINNET, TINYLOCK_APP_TESTNET, TINYLOCK_ASA_MAINNET, TINYLOCK_ASA_TESTNET, USER_MNEMONIC
 
-from operations.lock import lockToken
-from operations.relock import relockToken
-from operations.unlock import unlockToken
-from utils.account import Account, getBalances
-from utils.contracts import getAppGlobalState, getTinylockerSignature
+from tinylocker.operations.lock import lockToken
+from tinylocker.operations.relock import relockToken
+from tinylocker.operations.unlock import unlockToken
+from tinylocker.utils.account import Account, getBalances
+from tinylocker.utils.contracts import getAppGlobalState, getTinylockerSignature
 
 OP_METHOD = 1
 CLIENT = AlgodClient

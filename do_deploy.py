@@ -1,9 +1,9 @@
 from algosdk import mnemonic
 from algosdk.v2client.algod import AlgodClient
-from operations.util import createFeeTokenAsset, getAlgodClient
-from utils.account import Account
-from operations.deploy import createAlgolockerApp
-from operations.setup import setupAlgolockerApp
+from tinylocker.operations.util import createFeeTokenAsset
+from tinylocker.utils.account import Account
+from tinylocker.operations.deploy import createAlgolockerApp
+from tinylocker.operations.setup import setupAlgolockerApp
 from constants import ALGOD_ADDRESS, ALGOD_TOKEN, USER_MNEMONIC
 
 def getAlgodClient() -> AlgodClient:

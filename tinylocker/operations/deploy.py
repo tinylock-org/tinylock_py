@@ -1,8 +1,8 @@
 from algosdk.v2client.algod import AlgodClient
 from algosdk.future.transaction import StateSchema, ApplicationCreateTxn, OnComplete
-from utils.contracts import getTinylockerContractTouple
-from utils.transaction import waitForTransaction
-from utils.account import Account
+from ..utils.contracts import getTinylockerContractTouple
+from ..utils.transaction import waitForTransaction
+from ..utils.account import Account
 
 def createAlgolockerApp(
     client: AlgodClient,

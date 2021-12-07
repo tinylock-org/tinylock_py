@@ -4,8 +4,8 @@ from pyteal import compileTeal, Mode, Expr, Int
 from algosdk.v2client.algod import AlgodClient
 from algosdk.transaction import LogicSig
 
-from contracts.algolocker_mainnet import approval_program, clear_state_program
-from contracts.algolocker_sig import approval_program as signature_program
+from ..contracts.algolocker_mainnet import approval_program, clear_state_program
+from ..contracts.algolocker_sig import approval_program as signature_program
 
 def getTinylockerContractTouple(client: AlgodClient) -> Tuple[bytes, bytes] :
     return fullyCompileContract(client, approval_program()), fullyCompileContract(client, clear_state_program)
