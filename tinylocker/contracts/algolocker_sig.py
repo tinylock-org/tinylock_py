@@ -14,9 +14,15 @@ def approval_program(
     ):
 
     gtx_lock_algo_fee_to_sig = And(
-        Gtxn[0].amount() >= Int(2000), # Todo: Verify correct fees
+        Gtxn[0].amount() >= Int(2000),
         Gtxn[0].receiver() == Txn.sender(), # Signature should get fees
-        Gtxn[0].sender() != Txn.sender() # Signature does not pay the fee
+        # Either the owner locks initially or the migration address
+        # If the migrations address locks, it won't be able to relock or unlock, only the TMPL_LOCKER_ADDRESS
+        # Migration address was needed to transfer funds because of a critical bug found
+        Or(
+            Gtxn[0].sender() == Addr(TMPL_LOCKER_ADDRESS), # Owner
+            Gtxn[0].sender() == Addr("Z7DECPOTVR7WEAB47CFYEHTKAROVHX7QBYJCBDRVA5CC4JBKSFXBKQTERE") # Migration address
+        )
     )
 
     gtx_lock_tinylock_fee_to_contract = And(
@@ -33,6 +39,7 @@ def approval_program(
         Gtxn[2].sender() == Txn.sender(), # Signature is sender
         Gtxn[2].application_args[0] == Bytes("lock"),
         Gtxn[2].assets[0] == TMPL_FEETOKEN_ID,
+        Gtxn[2].rekey_to() == Global.zero_address() # No rekey of the signature
     )
 
     gtx_lock_optin_to_asset = And(
@@ -40,7 +47,8 @@ def approval_program(
         Gtxn[3].sender() == Txn.sender(), # Signature is sender
         Gtxn[3].asset_receiver() == Txn.sender(), # Signature is receiver
         Gtxn[3].amount() == Int(0), # OptIn amount should be 0
-        Gtxn[3].xfer_asset() == TMPL_ASSET_ID # Must be the token that is being locked
+        Gtxn[3].xfer_asset() == TMPL_ASSET_ID, # Must be the token that is being locked
+        Gtxn[3].rekey_to() == Global.zero_address() # No rekey of the signature
     )
 
     gtx_lock_asset_to_sig = And(
@@ -49,6 +57,8 @@ def approval_program(
         Gtxn[4].asset_receiver() == Txn.sender(), # Signature is receiver
         Gtxn[4].asset_amount() > Int(0), # Asset amount should be more than 0
         Gtxn[4].xfer_asset() == TMPL_ASSET_ID, # Must be the token that is being locked
+        Gtxn[4].asset_close_to() == Global.zero_address(), # No close out address 
+        Gtxn[4].rekey_to() == Global.zero_address() # No rekey of the signature
     )
 
     # Lockgroup TXN
@@ -69,21 +79,24 @@ def approval_program(
     gtx_unlock_algo_fee_to_sig = And(
         Gtxn[0].amount() > Int(0),
         Gtxn[0].receiver() == Txn.sender(), # Signature should get fees
-        Gtxn[0].sender() != Txn.sender() # Signature does not pay the fee
+        Gtxn[0].sender() == Addr(TMPL_LOCKER_ADDRESS) # Contract owner pays the fee
     )
 
     gtx_unlock_call_to_contract = And(
-        Gtxn[1].type_enum() == TxnType.ApplicationCall, # OptIn is a ApplicationCall
+        Gtxn[1].type_enum() == TxnType.ApplicationCall,
         Gtxn[1].application_id() == TMPL_CONTRACT_ID, # App must be Contract
         Gtxn[1].sender() == Txn.sender(), # Signature is sender
-        Gtxn[1].application_args[0] == Bytes("unlock")
+        Gtxn[1].application_args[0] == Bytes("unlock"),
+        Gtxn[1].rekey_to() == Global.zero_address() # No rekey of the signature
     )
 
     gtx_unlock_asset_to_locker = And(
         Gtxn[2].type_enum() == TxnType.AssetTransfer, # Transfer 
         Gtxn[2].sender() == Txn.sender(), # Signature is the sender
         Gtxn[2].asset_receiver() == Addr(TMPL_LOCKER_ADDRESS), # Locker is receiver
-        Gtxn[2].xfer_asset() == TMPL_ASSET_ID # Must be the token that is being locked
+        Gtxn[2].xfer_asset() == TMPL_ASSET_ID, # Must be the token that is being locked
+        Gtxn[2].asset_close_to() == Global.zero_address(), # No close out address 
+        Gtxn[2].rekey_to() == Global.zero_address() # No rekey of the signature
     )
 
     # Unlock TXN
@@ -100,20 +113,21 @@ def approval_program(
     gtx_relock_algo_fee_to_sig = And(
         Gtxn[0].amount() > Int(0),
         Gtxn[0].receiver() == Txn.sender(), # Signature should get fees
-        Gtxn[0].sender() != Txn.sender() # Signature does not pay the fee
+        Gtxn[0].sender() == Addr(TMPL_LOCKER_ADDRESS) # Owner pays the fee
     )
     gtx_relock_asset_to_locker = And(
         Gtxn[2].type_enum() == TxnType.AssetTransfer, # Transfer 
-        Gtxn[2].sender() != Txn.sender(), # Signature is not the sender
+        Gtxn[2].sender() == Addr(TMPL_LOCKER_ADDRESS), # Owner is sender
         Gtxn[2].asset_receiver() == Txn.sender(), # Signature is receiver
         Gtxn[2].asset_amount() > Int(0), # Asset amount should be more than 0
         Gtxn[2].xfer_asset() == TMPL_ASSET_ID, # Must be the token that is being locked
     )
     gtx_relock_call_to_contract = And(
-        Gtxn[3].type_enum() == TxnType.ApplicationCall, # OptIn is a ApplicationCall
+        Gtxn[3].type_enum() == TxnType.ApplicationCall, # ApplicationCall
         Gtxn[3].application_id() == TMPL_CONTRACT_ID, # App must be Contract
         Gtxn[3].sender() == Txn.sender(), # Signature is sender
-        Gtxn[3].application_args[0] == Bytes("relock")
+        Gtxn[3].application_args[0] == Bytes("relock"),
+        Gtxn[3].rekey_to() == Global.zero_address() # No rekey of the signature
     )
 
 

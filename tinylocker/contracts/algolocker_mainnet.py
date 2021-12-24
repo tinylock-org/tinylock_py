@@ -26,7 +26,7 @@ def approval_program():
         on_lock_asset_tx.type_enum() == TxnType.AssetTransfer,
         on_lock_asset_tx.asset_receiver() == Global.current_application_address(),
         on_lock_asset_tx_amount >= App.globalGet( Bytes("tinylock_fee") ),
-        on_lock_asset_tx.xfer_asset() == Txn.assets[0], # asa asset transfer matches appcall external_asset 0 ( shouldnt be tinylock asa)
+        on_lock_asset_tx.xfer_asset() == Txn.assets[0],
         Txn.assets[0] == App.globalGet( Bytes("tinylock_asa_id") ) # Fee token should have tinylock asa id
     )
 
@@ -79,7 +79,7 @@ def approval_program():
         on_relock_asset_tx.type_enum() == TxnType.AssetTransfer,
         on_relock_asset_tx.asset_receiver() == Global.current_application_address(),
         on_relock_asset_tx_amount >= App.globalGet( Bytes("tinylock_fee") ),
-        on_relock_asset_tx.xfer_asset() == Txn.assets[0], # asa asset transfer matches appcall external_asset 0 ( shouldnt be tinylock asa)
+        on_relock_asset_tx.xfer_asset() == Txn.assets[0],
         Txn.assets[0] == App.globalGet( Bytes("tinylock_asa_id") ) # Fee token should have tinylock asa id
     )
 
