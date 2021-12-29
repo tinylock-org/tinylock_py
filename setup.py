@@ -9,7 +9,7 @@ setuptools.setup(
     description="Tinylock Python SDK",
     author="Tinylock",
     author_email="contact@tinylock.org",
-    version="0.0.1",
+    version="1.0.0",
     long_description=long_description,
     long_description_content_type="text/markdown",
     license="MIT",
