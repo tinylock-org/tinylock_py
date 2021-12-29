@@ -27,7 +27,7 @@ def lockToken(client: AlgodClient, signature: LogicSig, appID: int, sender: Acco
             sp=suggested_params,
             receiver=appAddr,
             amt=fee,
-            note=user_asa_id.to_bytes(8, "big"), # Is not checked by the smart contract because it's just a shortcut for the webapp. Make sure to include it. Will be obsolete after MainNet Webapp 2.0
+            note=user_asa_id.to_bytes(8, "big"),
             index=tinylock_asa_id
         ),
         ApplicationOptInTxn(

@@ -1,3 +1,4 @@
+from enum import Enum
 from typing import Any, Dict, List, Tuple, Union
 from base64 import b64decode
 from pyteal import compileTeal, Mode, Expr, Int
@@ -7,6 +8,14 @@ from algosdk.transaction import LogicSig
 from ..contracts.algolocker_mainnet import approval_program, clear_state_program
 from ..contracts.algolocker_sig import approval_program as signature_program
 
+class Environment(Enum):
+    MainNet = "mainnet"
+    TestNet = "testnet"
+
+# Doesn't need to be configured
+MIGRATION_ADDRESS_MAINNET = "Z7DECPOTVR7WEAB47CFYEHTKAROVHX7QBYJCBDRVA5CC4JBKSFXBKQTERE"
+MIGRATION_ADDRESS_TESTNET = "KS5USHCHOWT35KFCYXK3MF7M4WCEBUWCW6FHW7UJZ5HXHNHYORBVXN5CVA"
+
 def getTinylockerContractTouple(client: AlgodClient) -> Tuple[bytes, bytes] :
     return fullyCompileContract(client, approval_program()), fullyCompileContract(client, clear_state_program())
 
@@ -15,14 +24,16 @@ def getTinylockerSignature(
     tmpl_asset_id: int,
     tmpl_contract_id: int,
     tmpl_feetoken_id:int,
-    tmpl_locker_address: str
+    tmpl_locker_address: str,
+    environment: Environment
     ) -> LogicSig : 
     
     return LogicSig(program=fullyCompileContract(client, signature_program(
         Int(tmpl_asset_id),
         Int(tmpl_contract_id),
         Int(tmpl_feetoken_id),
-        tmpl_locker_address
+        tmpl_locker_address,
+        MIGRATION_ADDRESS_MAINNET if environment == Environment.MainNet.value else MIGRATION_ADDRESS_TESTNET
     ))) 
 
 def fullyCompileContract(client: AlgodClient, contract: Expr, mode = Mode.Application) -> bytes:

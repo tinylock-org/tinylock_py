@@ -10,7 +10,8 @@ def approval_program(
     TMPL_ASSET_ID,
     TMPL_CONTRACT_ID,
     TMPL_FEETOKEN_ID,
-    TMPL_LOCKER_ADDRESS
+    TMPL_LOCKER_ADDRESS,
+    TMPL_MIGRATION_ADDRESS
     ):
 
     gtx_lock_algo_fee_to_sig = And(
@@ -21,7 +22,7 @@ def approval_program(
         # Migration address was needed to transfer funds because of a critical bug found
         Or(
             Gtxn[0].sender() == Addr(TMPL_LOCKER_ADDRESS), # Owner
-            Gtxn[0].sender() == Addr("Z7DECPOTVR7WEAB47CFYEHTKAROVHX7QBYJCBDRVA5CC4JBKSFXBKQTERE") # Migration address
+            Gtxn[0].sender() == Addr(TMPL_MIGRATION_ADDRESS) # Migration address
         )
     )
 
@@ -165,11 +166,12 @@ def approval_program(
 
 if __name__ == "__main__":
     with open("algolocker_sig.teal.tmpl", "w") as f:
-        compiled = compileTeal(approval_program(Int(10000000000), Int(20000000000), Int(30000000000), "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"), mode=Mode.Signature, version=5)
+        compiled = compileTeal(approval_program(Int(10000000000), Int(20000000000), Int(30000000000), "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB"), mode=Mode.Signature, version=5)
         # Replace values with TMPL VARIABLES
         compiled = compiled.replace("10000000000", "TMPL_ASSET_ID")
         compiled = compiled.replace("20000000000", "TMPL_CONTRACT_ID")
         compiled = compiled.replace("30000000000", "TMPL_FEETOKEN_ID")
         compiled = compiled.replace("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", "TMPL_LOCKER_ADDRESS")
+        compiled = compiled.replace("BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB", "TMPL_MIGRATION_ADDRESS")
 
         f.write(compiled)

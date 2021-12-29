@@ -6,13 +6,13 @@ from algosdk.v2client.algod import AlgodClient
 from tinyman.v1.pools import Pool
 from tinyman.v1.client import TinymanClient
 from tinyman.v1.constants import MAINNET_VALIDATOR_APP_ID, TESTNET_VALIDATOR_APP_ID
-from constants import ALGOD_ADDRESS_MAINNET, ALGOD_ADDRESS_TESTNET, ALGOD_TOKEN, MAINNET, TESTNET, TINYLOCK_APP_MAINNET, TINYLOCK_APP_TESTNET, TINYLOCK_ASA_MAINNET, TINYLOCK_ASA_TESTNET, USER_MNEMONIC
+from constants import ALGOD_ADDRESS_MAINNET, ALGOD_ADDRESS_TESTNET, ALGOD_TOKEN, TINYLOCK_APP_MAINNET, TINYLOCK_APP_TESTNET, TINYLOCK_ASA_MAINNET, TINYLOCK_ASA_TESTNET, USER_MNEMONIC
 
 from tinylocker.operations.lock import lockToken
 from tinylocker.operations.relock import relockToken
 from tinylocker.operations.unlock import unlockToken
 from tinylocker.utils.account import Account, getBalances
-from tinylocker.utils.contracts import getAppGlobalState, getTinylockerSignature
+from tinylocker.utils.contracts import getAppGlobalState, getTinylockerSignature, Environment
 
 OP_METHOD = 1
 CLIENT = AlgodClient
@@ -24,7 +24,7 @@ BALANCES = Dict[int, int]
 def getAlgodClient() -> AlgodClient:
     return AlgodClient(
         ALGOD_TOKEN, 
-        ALGOD_ADDRESS_TESTNET if ENVIRONMENT == TESTNET else ALGOD_ADDRESS_MAINNET,
+        ALGOD_ADDRESS_TESTNET if ENVIRONMENT == Environment.TestNet.value else ALGOD_ADDRESS_MAINNET,
         headers={'User-Agent': 'Client'}
         )
 
@@ -32,7 +32,7 @@ def main(argv):
     print("Args: ", argv)
 
     global ENVIRONMENT
-    ENVIRONMENT = TESTNET if argv[0] == TESTNET else MAINNET
+    ENVIRONMENT = Environment.TestNet.value if argv[0] == Environment.TestNet.value else Environment.MainNet.value
     print("Using environment: ", ENVIRONMENT)
 
     global CLIENT
@@ -43,12 +43,13 @@ def main(argv):
 
     global BALANCES
     BALANCES = getBalances(CLIENT, ACCOUNT.getAddress())
+    print("Balances: ", BALANCES)
 
     global TINYMAN_CLIENT
     TINYMAN_CLIENT = TinymanClient(
         CLIENT,
         MAINNET_VALIDATOR_APP_ID 
-        if ENVIRONMENT == MAINNET else 
+        if ENVIRONMENT == Environment.MainNet.value else 
         TESTNET_VALIDATOR_APP_ID
         )
 
@@ -67,10 +68,10 @@ def getPoolFor(asa1: int, asa2: int) -> Pool:
     return TINYMAN_CLIENT.fetch_pool(asset1, asset2)
 
 def getTinylockAppId() -> int:
-    return TINYLOCK_APP_TESTNET if ENVIRONMENT == TESTNET else TINYLOCK_APP_MAINNET
+    return TINYLOCK_APP_TESTNET if ENVIRONMENT == Environment.TestNet.value else TINYLOCK_APP_MAINNET
 
 def getTinylockAsaId() -> int:
-    return TINYLOCK_ASA_TESTNET if ENVIRONMENT == TESTNET else TINYLOCK_ASA_MAINNET
+    return TINYLOCK_ASA_TESTNET if ENVIRONMENT == Environment.TestNet.value else TINYLOCK_ASA_MAINNET
 
 
 def getFeeInfo() -> int:
@@ -113,7 +114,8 @@ def doLock(argv):
         lock_token_asa,
         getTinylockAppId(),
         getTinylockAsaId(),
-        ACCOUNT.getAddress()
+        ACCOUNT.getAddress(),
+        ENVIRONMENT
     )
 
     lockAsa, lockFee = getFeeInfo()
@@ -123,6 +125,8 @@ def doLock(argv):
         sys.exit(1)
 
     signature_balances = getBalances(CLIENT, tinylock_signature.address())
+    print("Lock contract balances: ", signature_balances, tinylock_signature.address())
+
 
     if lock_token_asa in signature_balances: 
         relockToken(
@@ -171,12 +175,13 @@ def doUnlock(argv):
         lock_token_asa,
         getTinylockAppId(),
         getTinylockAsaId(),
-        ACCOUNT.getAddress()
+        ACCOUNT.getAddress(),
+        ENVIRONMENT
     )   
 
     signature_balances = getBalances(CLIENT, tinylock_signature.address())
 
-    if unlock_amount >= signature_balances[lock_token_asa]:
+    if unlock_amount > signature_balances[lock_token_asa]:
         print("Your unlock amount %u is greater than the available balance of the contract: %u" % (unlock_amount, signature_balances[lock_token_asa]))
         sys.exit(1)
 
