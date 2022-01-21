@@ -21,6 +21,6 @@ setuptools.setup(
         "pyteal >= 0.9.0",
         "tinyman-py-sdk >= 0.0.4"
         ],
-    packages=setuptools.find_packages(where="./"),
+    packages=setuptools.find_packages(where="."),
     python_requires=">=3.7"
 )
