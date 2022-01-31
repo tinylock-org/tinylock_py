@@ -5,6 +5,7 @@ from pyteal import *
 # Int
 # Int
 # String
+# String
 
 def approval_program(
     TMPL_ASSET_ID,

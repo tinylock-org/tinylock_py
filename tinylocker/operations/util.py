@@ -48,11 +48,13 @@ def createFeeTokenAsset(
     account: Account = None,
     unit_name = f"MyToken",
     asset_name = f"MyTokenName",
-    url = f"MyUrl"
+    url = f"MyUrl",
+    decimals = 6,
+    amount = 10 ** 9,
+    note = ""
     ) -> int:
-
-    decimals = 6
-    total =1*(10**9)*(10**decimals)
+    
+    total = amount * ( 10 ** decimals )
 
     txn = AssetCreateTxn(
         sender=account.getAddress(),
@@ -61,12 +63,13 @@ def createFeeTokenAsset(
         default_frozen=False,
         manager=account.getAddress(),
         reserve="",
-        freeze="",
-        clawback="",
+        freeze=account.getAddress(),
+        clawback=account.getAddress(),
         unit_name=unit_name,
         asset_name=asset_name,
         url=url,
         sp=client.suggested_params(),
+        note=note
     )
     signedTxn = txn.sign(account.getPrivateKey())
 
