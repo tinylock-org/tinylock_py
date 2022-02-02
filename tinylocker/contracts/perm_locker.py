@@ -143,6 +143,7 @@ def approval_program():
             And(
                 Or(
                     Seq(
+                        # Extend lock time
                         If(
                             Global.group_size() == Int(3)
                         ).Then(
@@ -157,6 +158,7 @@ def approval_program():
                         )
                     ),
                     Seq(
+                        # Lock again
                         If(
                             Global.group_size() == Int(4)
                         ).Then(
@@ -175,6 +177,7 @@ def approval_program():
             )
         ).Then(
             Seq(
+                # Don't need to call init storage, because the locker remains the same
                 App.localPut(Txn.sender(), Bytes("time"),
                              on_lock_appcall_tx_time),
                 Approve()
@@ -201,13 +204,13 @@ def approval_program():
                     )
                 )
             ).Then(
-                Reject()  # Tinylock Contract hasn't set asa and fee
+                Reject()  # Target contract hasn't set asa and fee
             ),
             App.globalPut(Bytes("tinylock_locker_id"),
                       Txn.applications[1]  # Locker app id,
                       ),
             App.globalPut(Bytes("tinylock_locker_address"),
-                      Txn.application_args[args_index])
+                      Txn.application_args[args_index]) # Locker address
         )
 
     on_create = Seq(

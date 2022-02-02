@@ -86,7 +86,8 @@ def unlockPermissions(
             app_args=['unlock'],
             accounts=[sender_address],
             foreign_assets=[tinylock_asa_id, user_asa_id],
-            foreign_apps=[tinylock_fee_app]
+            foreign_apps=[tinylock_fee_app],
+            note=user_asa_id.to_bytes(8, "big")
         ),
     ]
 

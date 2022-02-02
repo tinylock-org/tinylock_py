@@ -3,3 +3,4 @@ __pycache__
 dist/**/*
 tinylock_py.egg-info/**/*
 **/**.teal
+**/**.tmpl

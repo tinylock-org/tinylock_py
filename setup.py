@@ -9,7 +9,7 @@ setuptools.setup(
     description="Tinylock Python SDK",
     author="Tinylock",
     author_email="contact@tinylock.org",
-    version="1.0.0",
+    version="2.0.0",
     long_description=long_description,
     long_description_content_type="text/markdown",
     license="MIT",
@@ -21,6 +21,6 @@ setuptools.setup(
         "pyteal >= 0.9.0",
         "tinyman-py-sdk >= 0.0.4"
         ],
-    packages=setuptools.find_packages(where="./"),
+    packages=setuptools.find_packages(where="."),
     python_requires=">=3.7"
 )
