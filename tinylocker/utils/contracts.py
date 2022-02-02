@@ -8,6 +8,10 @@ from algosdk.transaction import LogicSig
 from ..contracts.algolocker_mainnet import approval_program, clear_state_program
 from ..contracts.algolocker_sig import approval_program as signature_program
 
+from ..contracts.perm_locker import approval_program as perm_approval_program
+from ..contracts.perm_locker import clear_state_program as perm_clear_state_program
+from ..contracts.perm_sig import approval_program as perm_signature_program
+
 class Environment(Enum):
     MainNet = "mainnet"
     TestNet = "testnet"
@@ -34,7 +38,28 @@ def getTinylockerSignature(
         Int(tmpl_feetoken_id),
         tmpl_locker_address,
         MIGRATION_ADDRESS_MAINNET if environment == Environment.MainNet.value else MIGRATION_ADDRESS_TESTNET
-    ))) 
+    )))
+
+def getPermlockerContractTouple(client: AlgodClient) -> Tuple[bytes, bytes]:
+    return fullyCompileContract(client, perm_approval_program()), fullyCompileContract(client, perm_clear_state_program())
+
+def getPermlockerSignature(
+    client: AlgodClient, 
+    tmpl_asset_id: int,
+    tmpl_contract_id: int,
+    tmpl_feetoken_id:int,
+    tmpl_locker_address: str
+) -> LogicSig:
+
+    return LogicSig(program=fullyCompileContract(
+        client,
+        perm_signature_program(
+            Int(tmpl_asset_id),
+            Int(tmpl_contract_id),
+            Int(tmpl_feetoken_id),
+            tmpl_locker_address
+        ), Mode.Signature
+    ))
 
 def fullyCompileContract(client: AlgodClient, contract: Expr, mode = Mode.Application) -> bytes:
     return compileContract(client, compileTeal(contract, mode, version=5))
