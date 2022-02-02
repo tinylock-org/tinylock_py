@@ -73,8 +73,6 @@ def lockToken(
 
     transaction_group.submit(client, True)
 
-from algosdk.future.transaction import write_to_file
-
 def lockPermissions(
     client: AlgodClient, 
     signature: LogicSig, 

@@ -3,7 +3,7 @@ from pyteal import *
 # Signature Params:
 # Int
 # Int
-# String
+# Int
 # String
 
 def approval_program(
