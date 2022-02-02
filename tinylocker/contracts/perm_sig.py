@@ -149,7 +149,6 @@ def approval_program(
     )
 
     gtx_relock_call_to_contract = And(
-        # OptIn is a ApplicationCall
         Gtxn[2].type_enum() == TxnType.ApplicationCall,
         Gtxn[2].application_id() == TMPL_CONTRACT_ID,  # App must be Contract
         Gtxn[2].sender() == Txn.sender(),  # Signature is sender
